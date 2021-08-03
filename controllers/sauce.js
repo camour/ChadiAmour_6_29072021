@@ -1,5 +1,6 @@
 const Sauce = require('../models/Sauce');
 const sauceHandlers = require('../handlers/sauce');
+const fs = require('fs');
 
 exports.getAllSauces = (request, response, next) =>{
     Sauce.find()
@@ -46,33 +47,19 @@ exports.modifySauce = (request, response, next) => {
     Sauce.updateOne({_id: request.params.id}, {...sauceObject})
     .then(() => response.status(200).json({message: 'Sauce modified !'}))
     .catch(error => response.status(400).json({error}));
-
-    /*
-    if(!request.file){        
-        Sauce.updateOne({_id: request.params.id}, {...request.body})
-        .then(() => response.status(200).json({message: 'Sauce modified without image file'}))
-        .catch(error => response.status(400).json({error}));
-    }
-    else{        
-        const sauceObject = JSON.parse(request.body.sauce);
-        Sauce.updateOne({_id: request.params.id}, {
-            name: sauceObject.name,
-            manufacturer: sauceObject.manufacturer,
-            description: sauceObject.description,
-            mainPepper: sauceObject.mainPepper,
-            imageUrl: request.file.originalname,
-            heat: sauceObject.heat            
-        })
-        .then(() => response.status(200).json({message: 'Sauce modified with image file'}))
-        .catch(error => response.status(400).json({error}));        
-    }*/
-    
 }
 
 exports.deleteSauce = (request, response, next) => {
-    Sauce.deleteOne({_id: request.params.id})
-    .then(() => response.status(200).json({message: 'Sauce deleted !'}))
-    .catch(error => response.status(400).json({error}));
+    Sauce.findOne({_id: request.params.id})
+    .then(sauce => {
+        const filename = sauce.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
+            Sauce.deleteOne({_id: request.params.id})
+            .then(() => response.status(200).json({message: 'Sauce deleted !'}))
+            .catch(error => response.status(400).json({error}));
+        });
+    })
+    .catch(error => response.status(500).json({error}));    
 }
 
 exports.likeOrDislikeSauce = (request, response, next) => {
