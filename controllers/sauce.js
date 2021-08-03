@@ -1,4 +1,5 @@
 const Sauce = require('../models/Sauce');
+const sauceHandler = require('../handlers/sauceHandler');
 
 exports.getAllSauces = (request, response, next) =>{
     Sauce.find()
@@ -45,7 +46,6 @@ exports.modifySauce = (request, response, next) => {
     else{        
         const sauceObject = JSON.parse(request.body.sauce);
         Sauce.updateOne({_id: request.params.id}, {
-            userId: sauceObject.userId,
             name: sauceObject.name,
             manufacturer: sauceObject.manufacturer,
             description: sauceObject.description,
@@ -57,4 +57,29 @@ exports.modifySauce = (request, response, next) => {
         .catch(error => response.status(400).json({error}));        
     }
     
+}
+
+exports.deleteSauce = (request, response, next) => {
+    Sauce.deleteOne({_id: request.params.id})
+    .then(() => response.status(200).json({message: 'Sauce deleted !'}))
+    .catch(error => response.status(400).json({error}));
+}
+
+exports.likeOrDislikeSauce = (request, response, next) => {
+        Sauce.findOne({_id: request.params.id})
+        .then(sauce => {
+           
+           const message = sauceHandler.likingSauceHandler(request, sauce);
+                
+            Sauce.updateOne({_id: request.params.id},{
+                likes: sauce.likes,
+                dislikes: sauce.dislikes,
+                usersLiked: sauce.usersLiked,
+                usersDisliked: sauce.usersDisliked
+            })
+            .then(() => response.status(201).json({message: 'Liking t'}))
+            .catch(error => response.status(400).json({error}));            
+            
+        })
+        .catch(error => response.status(404).json({error}));       
 }
