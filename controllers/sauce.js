@@ -1,5 +1,5 @@
 const Sauce = require('../models/Sauce');
-const sauceHandler = require('../handlers/sauceHandler');
+const sauceHandlers = require('../handlers/sauce');
 
 exports.getAllSauces = (request, response, next) =>{
     Sauce.find()
@@ -9,7 +9,7 @@ exports.getAllSauces = (request, response, next) =>{
 
 exports.createSauce = (request, response, next) =>{
     const sauceObject = JSON.parse(request.body.sauce);
-    //console.log(request.file);
+   
     const sauce = new Sauce({
         userId: sauceObject.userId,
         name: sauceObject.name,
@@ -69,7 +69,7 @@ exports.likeOrDislikeSauce = (request, response, next) => {
         Sauce.findOne({_id: request.params.id})
         .then(sauce => {
            
-           const message = sauceHandler.likingSauceHandler(request, sauce);
+            const message = sauceHandlers.likingSauceHandler(request, sauce);
                 
             Sauce.updateOne({_id: request.params.id},{
                 likes: sauce.likes,
