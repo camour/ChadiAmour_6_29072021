@@ -8,15 +8,14 @@ exports.getAllSauces = (request, response, next) =>{
 }
 
 exports.createSauce = (request, response, next) =>{
-    const sauceObject = JSON.parse(request.body.sauce);
-   
+    const sauceObject = JSON.parse(request.body.sauce);   
     const sauce = new Sauce({
         userId: sauceObject.userId,
         name: sauceObject.name,
         manufacturer: sauceObject.manufacturer,
         description: sauceObject.description,
         mainPepper: sauceObject.mainPepper,
-        imageUrl: request.file.originalname,
+        imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`,
         heat: sauceObject.heat,
         likes: 0,
         dislikes: 0,
@@ -37,7 +36,18 @@ exports.getOneSauce = (request, response, next) => {
 }
 
 exports.modifySauce = (request, response, next) => {
-    
+
+    const sauceObject = request.file ? 
+    {
+        ...JSON.parse(request.body.sauce),
+        imageUrl: `${request.protocol}://${request.get('host')}/images/${request.file.filename}`
+    } : {...request.body} ;
+
+    Sauce.updateOne({_id: request.params.id}, {...sauceObject})
+    .then(() => response.status(200).json({message: 'Sauce modified !'}))
+    .catch(error => response.status(400).json({error}));
+
+    /*
     if(!request.file){        
         Sauce.updateOne({_id: request.params.id}, {...request.body})
         .then(() => response.status(200).json({message: 'Sauce modified without image file'}))
@@ -55,7 +65,7 @@ exports.modifySauce = (request, response, next) => {
         })
         .then(() => response.status(200).json({message: 'Sauce modified with image file'}))
         .catch(error => response.status(400).json({error}));        
-    }
+    }*/
     
 }
 
