@@ -4,7 +4,7 @@ const sauceController = require('../controllers/sauce');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 
-
+//auth middleware checks the user is authentified
 router.get('/', auth, sauceController.getAllSauces);
 router.get('/:id', auth, sauceController.getOneSauce);
 router.post('/:id/like', auth, sauceController.likeOrDislikeSauce);
