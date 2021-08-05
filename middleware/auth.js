@@ -12,7 +12,7 @@ module.exports = (request, response, next) =>{
             next();
         }
     }
-    catch(error){
+    catch(error){        
         response.status(401).json({error: error|'Unauthenticated request !'});
     }
 };

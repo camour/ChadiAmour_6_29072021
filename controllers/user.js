@@ -2,6 +2,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const base64 = require('base-64');
+const utf8 = require('utf8');
 
 
 
@@ -9,7 +11,7 @@ exports.signup = (request, response, next) => {
    bcrypt.hash(request.body.password, 10)
    .then(passwordHash => {
     const user = new User({
-        email: request.body.email,
+        email: base64.encode(utf8.encode(request.body.email)),
         password: passwordHash
     });
     user.save()
@@ -20,8 +22,8 @@ exports.signup = (request, response, next) => {
 
 };
 
-exports.login = (request, response, next) => {
-    User.findOne({email: request.body.email})
+exports.login = (request, response, next) => {    
+    User.findOne({email: base64.encode(utf8.encode(request.body.email))})
     .then(user => {
         if(!user){
             return response.status(401).json({error: 'Incorrect email or password'});
