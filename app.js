@@ -2,6 +2,7 @@ const express=require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require('helmet');
 
 const app = express();
 const userRoutes = require('./routes/user');
@@ -12,6 +13,9 @@ mongoose.connect('mongodb+srv://camour_user:backend@cluster0.penxr.mongodb.net/s
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+//set http only flag to prevent cookies from being accessed by any script
+app.use(helmet());
 
 // set CORS mecanism
 app.use((request, response, next) => {
