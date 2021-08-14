@@ -8,13 +8,15 @@ const app = express();
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
 
+// connects to the database and warns us if something wrong happenned
 mongoose.connect('mongodb+srv://camour_user:backend@cluster0.penxr.mongodb.net/soPekocko?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-//set http only flag to prevent cookies from being accessed by any script
+//sets HSTS (Http Strict Transport Security) attribute : 
+// it prevents from XSS, also cookies from being accessed by any scripts and sets https connexions
 app.use(helmet());
 
 // set CORS mecanism

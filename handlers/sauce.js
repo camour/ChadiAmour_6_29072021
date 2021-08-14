@@ -1,4 +1,8 @@
-
+/* handles like and dislike process : this functionnality is separate from the controller because
+ it is a whole process that does not interact with the database. The liking process just modifies 
+ the sauce object et returns it to the sauce controller and that is the sauce controller which sends 
+ the sauce modifier to the database*/
+ 
 const likeSauce = (request, sauce) => {
     if(!sauce.usersLiked.includes(request.body.userId)){
         sauce.usersLiked.push(request.body.userId);

@@ -8,8 +8,11 @@ const utf8 = require('utf8');
 
 
 exports.signup = (request, response, next) => {
+    // we save the password under an hash (with a salt) so any hackers who would access the database can't
+    // retry the original password
    bcrypt.hash(request.body.password, 10)
    .then(passwordHash => {
+    // encoding makes it less easier for hackers to decode the email
     const user = new User({
         email: base64.encode(utf8.encode(request.body.email)),
         password: passwordHash
@@ -28,6 +31,8 @@ exports.login = (request, response, next) => {
         if(!user){
             return response.status(401).json({error: 'Incorrect email or password'});
         }
+        // we can not compare the password entered to the original password, we only compare their 
+        // respective hash and this comparison makes it possible to know if it corresponds to the original password
         bcrypt.compare(request.body.password, user.password)
         .then(valid => {
             if(!valid){

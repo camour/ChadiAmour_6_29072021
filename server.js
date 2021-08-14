@@ -35,6 +35,7 @@ const errorHandler = error => {
   }
 };
 
+// creates an http server
 const server = http.createServer(app);
 
 server.on('error', errorHandler);
@@ -44,4 +45,5 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+// runs the http server
 server.listen(port);
